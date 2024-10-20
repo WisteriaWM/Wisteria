@@ -12,8 +12,8 @@ LDFLAGS = $(shell pkg-config --libs wlroots-0.19 pixman-1 wayland-server)
 INCLUDES = $(shell pkg-config --cflags wlroots-0.19 pixman-1 wayland-server)
 
 # Files
-SRCS = src/main.c
-OBJS = $(SRCS:src/%.c=build/%.o)
+SRCS = main.c
+OBJS = $(SRCS:%.c=build/%.o)
 
 # Ensure build directory exists
 $(shell mkdir -p build)
@@ -24,7 +24,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
-build/%.o: src/%.c
+build/%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Clean rule
