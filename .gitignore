@@ -1,0 +1,15 @@
+# Ignore build directories
+/build/
+**/build/
+
+#Ignore cache directories
+/.cache/
+**/cache
+
+# Ignore compiled object files and libraries
+*.o
+*.a
+*.so
+*.dylib
+
+compile_commands.json
