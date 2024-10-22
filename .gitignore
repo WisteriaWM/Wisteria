@@ -2,6 +2,9 @@
 /build/
 **/build/
 
+**/include/xdg-shell-protocol.h
+/include/xdg-shell-protocol.h
+
 #Ignore cache directories
 /.cache/
 **/cache
