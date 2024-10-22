@@ -1,35 +1,32 @@
 include config.mk
 
-CC = gcc
+# Targets
+all: clean build
 
-PKGS      = wayland-server xkbcommon libinput $(XLIBS)
-DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PKGS)` $(WLR_INCS) $(DWLCPPFLAGS) $(DWLDEVCFLAGS) $(CFLAGS)
-LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(WLR_LIBS) -lm $(LIBS)
+build : $(BUILD_DIR)/$(TARGET)
 
+# Wayland scanner for protocol headers
+#
+# From tinywl makefile: https://gitlab.freedesktop.org/wlroots/wlroots/-/blob/master/tinywl/Makefile
+# # wayland-scanner is a tool which generates C headers and rigging for Wayland
+# protocols, which are specified in XML. wlroots requires you to rig these up
+# to your build system yourself and provide them in the include path.
+$(INCLUDE_DIR)/xdg-shell-protocol.h:
+	@mkdir -p $(INCLUDE_DIR)
+	$(WAYLAND_SCANNER) server-header \
+		$(WAYLAND_PROTOCOLS)/stable/xdg-shell/xdg-shell.xml $@
 
-CFLAGS = -std=c11 -Wall -Wextra -Werror -DWLR_USE_UNSTABLE -DWL_HIDE_DEPRECATED
-LDFLAGS = $(shell pkg-config --libs wlroots-0.19 pixman-1 wayland-server)
-INCLUDES = $(shell pkg-config --cflags wlroots-0.19 pixman-1 wayland-server)
+# Compile WisteriaWM object
+$(BUILD_DIR)/wisteriawm.o: $(SRC_DIR)/wisteriawm.c $(INCLUDE_DIR)/xdg-shell-protocol.h
+	@mkdir -p $(BUILD_DIR)
+	$(CC) -c $< -g -Werror $(CFLAGS) -I$(INCLUDE_DIR) -DWLR_USE_UNSTABLE -o $@
 
-# Files
-SRCS = main.c
-OBJS = $(SRCS:%.c=build/%.o)
+# Link WisteriaWM executable
+$(BUILD_DIR)/$(TARGET): $(BUILD_DIR)/wisteriawm.o
+	$(CC) $^ -g -Werror $(CFLAGS) -I$(INCLUDE_DIR) $(LDFLAGS) $(LIBS) -o $@
 
-# Ensure build directory exists
-$(shell mkdir -p build)
-
-# Build rules
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
-
-build/%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-# Clean rule
+# Clean build directory
 clean:
-	rm -rf build
+	rm -rf $(BUILD_DIR) $(INCLUDE_DIR)/xdg-shell-protocol.h
 
-.PHONY: all clean
-
+.PHONY: all clean build
