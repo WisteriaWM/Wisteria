@@ -26,6 +26,8 @@
 #include <xkbcommon/xkbcommon.h>
 
 #include "server.h"
+#include "input/keyboard.h"
+#include "output.h"
 
 
 int main(int argc, char *argv[])
