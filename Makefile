@@ -20,9 +20,11 @@ $(INCLUDE_DIR)/xdg-shell-protocol.h:
 $(BUILD_DIR)/wisteriawm.o: $(SRC_DIR)/wisteriawm.c $(INCLUDE_DIR)/xdg-shell-protocol.h
 	@mkdir -p $(BUILD_DIR)
 	$(CC) -c $< -g -Werror $(CFLAGS) -I$(INCLUDE_DIR) -DWLR_USE_UNSTABLE -o $@
+$(BUILD_DIR)/server.o: src/server.c
+	$(CC) -c $< -g -Werror $(CFLAGS) -I$(INCLUDE_DIR) -DWLR_USE_UNSTABLE -o $@
 
 # Link WisteriaWM executable
-$(BUILD_DIR)/$(TARGET): $(BUILD_DIR)/wisteriawm.o
+$(BUILD_DIR)/$(TARGET): $(BUILD_DIR)/wisteriawm.o $(BUILD_DIR)/server.o
 	$(CC) $^ -g -Werror $(CFLAGS) -I$(INCLUDE_DIR) $(LDFLAGS) $(LIBS) -o $@
 
 # Clean build directory

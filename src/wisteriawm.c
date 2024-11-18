@@ -25,8 +25,12 @@
 #include <wlr/util/log.h>
 #include <xkbcommon/xkbcommon.h>
 
-int main() {
+#include "server.h"
+
+
+int main(int argc, char *argv[])
+{
     printf("Welcome to WisteriaWM!\n");
+    struct wisteria_server *server;
     return 0;
 }
-
